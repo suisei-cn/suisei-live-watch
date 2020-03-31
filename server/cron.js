@@ -20,12 +20,23 @@ function delCronGroup(group) {
   cronList = cronList.filter(x => x.group !== group);
 }
 
+function getCronGroupLast(group) {
+  for (const i of cronList.reverse()) {
+    if (i.group === group) return i;
+  }
+  return false;
+}
+
 function init() {
   routineID = setInterval(() => {
     let now = new Date();
     while (cronList.length && cronList[0].time - now < CHECK_INTERVAL) {
       let cron = cronList.splice(0, 1)[0];
-      console.log(`Cron resolved for ${cron.group} at ${new Date(cron.time).toLocaleString()}`);
+      console.log(
+        `Cron resolved for ${cron.group} at ${new Date(
+          cron.time
+        ).toLocaleString()}`
+      );
       try {
         cron.callback();
       } catch (e) {
@@ -43,6 +54,7 @@ function deinit() {
 module.exports = {
   addCron,
   delCronGroup,
+  getCronGroupLast,
   init,
   deinit
 };
