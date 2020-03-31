@@ -37,6 +37,7 @@ app.post("/schedule", (req, res) => {
     time: time,
     vid: vid
   };
+  let targetDate = new Date(time);
   let currDate = new Date();
   if (isChangedOrNewCron) {
     cron.addCron(
@@ -47,26 +48,25 @@ app.post("/schedule", (req, res) => {
       vid
     );
   }
-  if (time - 3 * 60 * 60 * 1000 <= currDate) {
+  if (targetDate - 3 * 60 * 60 * 1000 <= currDate) {
     console.log(`Less than 3 hours to this stream. Ignoring this cron.`);
     res.sendStatus(200);
     return;
   }
   cron.addCron(
-    time - 3 * 60 * 60 * 1000,
+    targetDate - 3 * 60 * 60 * 1000,
     function() {
       message.announceCast(announceData, CHAT_ID);
     },
     vid
   );
-  if (time - 30 * 60 * 1000 <= currDate) {
+  if (targetDate - 30 * 60 * 1000 <= currDate) {
     console.log(`Less than 30 minutes to this stream. Ignoring this cron.`);
     res.sendStatus(200);
     return;
   }
-
   cron.addCron(
-    time - 30 * 60 * 1000,
+    targetDate - 30 * 60 * 1000,
     function() {
       message.announceCast(announceData, CHAT_ID);
     },
@@ -75,4 +75,6 @@ app.post("/schedule", (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(SERVER_PORT, () => console.log(`SLW server listening on port ${SERVER_PORT}!`));
+app.listen(SERVER_PORT, () =>
+  console.log(`SLW server listening on port ${SERVER_PORT}!`)
+);
