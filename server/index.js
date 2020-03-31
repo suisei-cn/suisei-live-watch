@@ -11,6 +11,7 @@ const app = express();
 app.use(bodyParser.json());
 
 cron.init();
+const seenVidsAndTime = {};
 
 app.get("/", (req, res) => res.send("Hello World!"));
 
@@ -27,28 +28,34 @@ app.post("/schedule", (req, res) => {
   let time = req.body.time;
   let targetDate = new Date(time);
   let currDate = new Date();
-  let oldCron = cron.getCronGroupLast(vid);
-  let isChangedOrNewCron = true;
-  if (oldCron) {
-    if (targetDate === oldCron.data) isChangedOrNewCron = false;
-    cron.delCronGroup(vid);
+
+  if (Object.keys(seenVidsAndTime).includes(vid)) {
+    if (Number(targetDate) === Number(seenVidsAndTime[vid])) {
+      // Don't modify it if there's no changes!
+      console.log(`${vid}: Identical info has been seen before.`);
+      res.sendStatus(304);
+      return;
+    }
   }
+  // Clean info
+  cron.delCronGroup(vid);
+  // Update history info
+  seenVidsAndTime[vid] = targetDate;
+
   let announceData = {
     name: "星姐",
     title: req.body.title,
     time: time,
     vid: vid
   };
-  if (isChangedOrNewCron) {
-    cron.addCron(
-      currDate,
-      function() {
-        message.announceCast(announceData, CHAT_ID);
-      },
-      vid,
-      targetDate
-    );
-  }
+  cron.addCron(
+    currDate,
+    function() {
+      message.announceCast(announceData, CHAT_ID);
+    },
+    vid
+  );
+
   if (targetDate - 3 * 60 * 60 * 1000 <= currDate) {
     console.log(`Less than 3 hours to this stream. Ignoring this cron.`);
     res.sendStatus(200);
@@ -59,9 +66,9 @@ app.post("/schedule", (req, res) => {
     function() {
       message.announceCast(announceData, CHAT_ID);
     },
-    vid,
-    targetDate
+    vid
   );
+
   if (targetDate - 30 * 60 * 1000 <= currDate) {
     console.log(`Less than 30 minutes to this stream. Ignoring this cron.`);
     res.sendStatus(200);
@@ -72,8 +79,7 @@ app.post("/schedule", (req, res) => {
     function() {
       message.announceCast(announceData, CHAT_ID);
     },
-    vid,
-    targetDate
+    vid
   );
   res.sendStatus(200);
 });

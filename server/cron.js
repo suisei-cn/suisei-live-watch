@@ -3,7 +3,7 @@ var routineID;
 const config = require("./config.json");
 const CHECK_INTERVAL = config.CHECK_INTERVAL || 1000;
 
-function addCron(time, callback, group, streamtime = "") {
+function addCron(time, callback, group) {
   let insertSeq = 0;
   for (; insertSeq < cronList.length; insertSeq++) {
     if (cronList[insertSeq].time > time) break;
@@ -12,21 +12,13 @@ function addCron(time, callback, group, streamtime = "") {
   cronList.splice(insertSeq, 0, {
     time,
     callback,
-    group,
-    data: streamtime
+    group
   });
 }
 
 function delCronGroup(group) {
   console.log(`All cron deleted for ${group}`);
   cronList = cronList.filter(x => x.group !== group);
-}
-
-function getCronGroupLast(group) {
-  for (const i of cronList.reverse()) {
-    if (i.group === group) return i;
-  }
-  return false;
 }
 
 function init() {
@@ -56,7 +48,6 @@ function deinit() {
 module.exports = {
   addCron,
   delCronGroup,
-  getCronGroupLast,
   init,
   deinit
 };
