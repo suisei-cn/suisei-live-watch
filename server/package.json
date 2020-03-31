@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/outloudvi/suisei-live-watch.git"
+    "url": "git+https://github.com/suisei-cn/suisei-live-watch.git"
   },
   "keywords": [
     "youtube",
@@ -26,7 +26,7 @@
   "author": "Outvi V <git+npm@outv.im>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/outloudvi/suisei-live-watch/issues"
+    "url": "https://github.com/suisei-cn/suisei-live-watch/issues"
   },
-  "homepage": "https://github.com/outloudvi/suisei-live-watch#readme"
+  "homepage": "https://github.com/suisei-cn/suisei-live-watch#readme"
 }
