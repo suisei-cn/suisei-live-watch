@@ -25,27 +25,28 @@ app.post("/schedule", (req, res) => {
   }
   let vid = req.body.vid;
   let time = req.body.time;
+  let targetDate = new Date(time);
+  let currDate = new Date();
   let oldCron = cron.getCronGroupLast(vid);
   let isChangedOrNewCron = true;
   if (oldCron) {
-    if (time === oldCron.time) isChangedOrNewCron = false;
+    if (targetDate === oldCron.data) isChangedOrNewCron = false;
+    cron.delCronGroup(vid);
   }
-  cron.delCronGroup(vid);
   let announceData = {
     name: "星姐",
     title: req.body.title,
     time: time,
     vid: vid
   };
-  let targetDate = new Date(time);
-  let currDate = new Date();
   if (isChangedOrNewCron) {
     cron.addCron(
       currDate,
       function() {
         message.announceCast(announceData, CHAT_ID);
       },
-      vid
+      vid,
+      targetDate
     );
   }
   if (targetDate - 3 * 60 * 60 * 1000 <= currDate) {
@@ -58,7 +59,8 @@ app.post("/schedule", (req, res) => {
     function() {
       message.announceCast(announceData, CHAT_ID);
     },
-    vid
+    vid,
+    targetDate
   );
   if (targetDate - 30 * 60 * 1000 <= currDate) {
     console.log(`Less than 30 minutes to this stream. Ignoring this cron.`);
@@ -70,7 +72,8 @@ app.post("/schedule", (req, res) => {
     function() {
       message.announceCast(announceData, CHAT_ID);
     },
-    vid
+    vid,
+    targetDate
   );
   res.sendStatus(200);
 });

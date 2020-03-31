@@ -3,7 +3,7 @@ var routineID;
 const config = require("./config.json");
 const CHECK_INTERVAL = config.CHECK_INTERVAL || 1000;
 
-function addCron(time, callback, group) {
+function addCron(time, callback, group, streamtime = "") {
   let insertSeq = 0;
   for (; insertSeq < cronList.length; insertSeq++) {
     if (cronList[insertSeq].time > time) break;
@@ -12,11 +12,13 @@ function addCron(time, callback, group) {
   cronList.splice(insertSeq, 0, {
     time,
     callback,
-    group
+    group,
+    data: streamtime
   });
 }
 
 function delCronGroup(group) {
+  console.log(`All cron deleted for ${group}`);
   cronList = cronList.filter(x => x.group !== group);
 }
 
