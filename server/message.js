@@ -23,7 +23,7 @@ function announceCast(data, chatid) {
     chatid,
     `#${data.name}直播预告\n` +
       `${data.title}\n` +
-      `时间：${date.toLocaleString()}\n` +
+      `时间：${date.toLocaleString()} (JST)\n` + // TODO: Timezone
       `[直播地址](https://youtu.be/${data.vid})`
   );
 }
