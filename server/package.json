@@ -5,5 +5,28 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
     "node-fetch": "^2.6.0"
-  }
+  },
+  "name": "suisei-live-watch-server",
+  "version": "1.0.0",
+  "description": "Watch and remind Suisei's upcoming livestreams.",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/outloudvi/suisei-live-watch.git"
+  },
+  "keywords": [
+    "youtube",
+    "suisei",
+    "cron"
+  ],
+  "author": "Outvi V <git+npm@outv.im>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/outloudvi/suisei-live-watch/issues"
+  },
+  "homepage": "https://github.com/outloudvi/suisei-live-watch#readme"
 }
