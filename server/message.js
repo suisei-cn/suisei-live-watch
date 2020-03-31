@@ -1,5 +1,8 @@
 const fetch = require("node-fetch");
 const config = require("./config.json");
+const moment = require("moment");
+const mtz = require("moment-timezone");
+moment.locale("zh-cn");
 
 const BOT_KEY = config.BOT_KEY;
 
@@ -18,12 +21,13 @@ async function sendTGMessage(chatid, text) {
 }
 
 function announceCast(data, chatid) {
-  let date = new Date(data.time);
+  let momentDate = moment(data.time);
+  let dateTzString = momentDate.tz('Asia/Shanghai').format('lll');
   sendTGMessage(
     chatid,
     `#${data.name}直播预告\n` +
       `${data.title}\n` +
-      `时间：${date.toLocaleString()} (JST)\n` + // TODO: Timezone
+      `时间：${dateTzString} (CST)\n` +
       `[直播地址](https://youtu.be/${data.vid})`
   );
 }
