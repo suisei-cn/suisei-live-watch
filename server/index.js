@@ -5,10 +5,10 @@ const bodyParser = require("body-parser");
 const config = require("./config.json");
 
 const CHAT_ID = config.CHAT_ID;
+const SERVER_PORT = config.SERVER_PORT;
 
 const app = express();
 app.use(bodyParser.json());
-const port = 3000;
 
 cron.init();
 
@@ -75,4 +75,4 @@ app.post("/schedule", (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(port, () => console.log(`SLW server listening on port ${port}!`));
+app.listen(SERVER_PORT, () => console.log(`SLW server listening on port ${SERVER_PORT}!`));
