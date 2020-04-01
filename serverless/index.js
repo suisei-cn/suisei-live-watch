@@ -2,29 +2,12 @@ addEventListener("fetch", event => {
   event.respondWith(handleRequest(event.request));
 });
 
-const BOT_KEY = "TELEGRAM_BOT_KEY";
 const YOUTUBE_API_KEY = "YOUTUBE_API_KEY";
-const ADMIN_CHATID = "ADMIN_UID";
-const CHAN_CHATID = "CHANNEL_UID";
 const SERVER_SIDE_URL = "http://server/schedule";
 
 const validTopic = [
   "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC5CwaMl1eIgY8h02uZw7u8A" // Suisei Hosimati
 ];
-
-async function sendTGMessage(chatid, text) {
-  await fetch(`https://api.telegram.org/bot${BOT_KEY}/sendMessage`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json; charset=utf-8"
-    },
-    body: JSON.stringify({
-      chat_id: chatid,
-      text: text,
-      parse_mode: "markdown"
-    })
-  });
-}
 
 async function handleRequest(request) {
   let body = await request.text();
