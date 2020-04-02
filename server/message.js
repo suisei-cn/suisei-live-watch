@@ -22,13 +22,19 @@ async function sendTGMessage(chatid, text) {
 
 function announceCast(data, chatid) {
   let momentDate = moment(data.time);
-  let dateTzString = momentDate.tz('Asia/Shanghai').format('lll');
+  let dateTzString = momentDate.tz("Asia/Shanghai").format("lll");
   sendTGMessage(
     chatid,
-    `#${data.name}直播预告\n` +
-      `${data.title}\n` +
-      `时间：${dateTzString} (CST)\n` +
-      `[直播地址](https://youtu.be/${data.vid})`
+    data.time_left
+      ? `#${data.name}直播预告\n` +
+          `距离${data.name}直播还有${data.time_left}。\n` +
+          `${data.title}\n` +
+          `时间：${dateTzString} (CST)\n` +
+          `[直播地址](https://youtu.be/${data.vid})`
+      : `#${data.name}直播预告 #新直播计划\n` +
+          `${data.title}\n` +
+          `时间：${dateTzString} (CST)\n` +
+          `[直播地址](https://youtu.be/${data.vid})`
   );
 }
 

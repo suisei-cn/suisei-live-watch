@@ -62,19 +62,6 @@ app.post("/schedule", (req, res) => {
     vid
   );
 
-  if (targetDate - 3 * 60 * 60 * 1000 <= currDate) {
-    console.log(`Less than 3 hours to this stream. Ignoring this cron.`);
-    res.sendStatus(200);
-    return;
-  }
-  cron.addCron(
-    targetDate - 3 * 60 * 60 * 1000,
-    function() {
-      message.announceCast(announceData, CHAT_ID);
-    },
-    vid
-  );
-
   if (targetDate - 30 * 60 * 1000 <= currDate) {
     console.log(`Less than 30 minutes to this stream. Ignoring this cron.`);
     res.sendStatus(200);
@@ -83,7 +70,30 @@ app.post("/schedule", (req, res) => {
   cron.addCron(
     targetDate - 30 * 60 * 1000,
     function() {
-      message.announceCast(announceData, CHAT_ID);
+      message.announceCast(
+        Object.assign(announceData, {
+          time_left: "30分钟"
+        }),
+        CHAT_ID
+      );
+    },
+    vid
+  );
+
+  if (targetDate - 3 * 60 * 60 * 1000 <= currDate) {
+    console.log(`Less than 3 hours to this stream. Ignoring this cron.`);
+    res.sendStatus(200);
+    return;
+  }
+  cron.addCron(
+    targetDate - 3 * 60 * 60 * 1000,
+    function() {
+      message.announceCast(
+        Object.assign(announceData, {
+          time_left: "3小时"
+        }),
+        CHAT_ID
+      );
     },
     vid
   );
