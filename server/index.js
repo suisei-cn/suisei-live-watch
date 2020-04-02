@@ -6,6 +6,7 @@ const config = require("./config.json");
 
 const CHAT_ID = config.CHAT_ID;
 const SERVER_PORT = config.SERVER_PORT;
+const RECORD_TIME_LIMIT = config.RECORD_TIME_LIMIT || 90 * 24 * 60 * 60 * 1000;
 
 const app = express();
 app.use(bodyParser.json());
@@ -28,6 +29,11 @@ app.post("/schedule", (req, res) => {
   let time = req.body.time;
   let targetDate = new Date(time);
   let currDate = new Date();
+  if (targetDate - currDate > config.RECORD_TIME_LIMIT) {
+    console.log(`${vid}: Schedule too far away. Ignoring.`);
+    res.sendStatus(304);
+    return;
+  }
 
   if (Object.keys(seenVidsAndTime).includes(vid)) {
     if (Number(targetDate) === Number(seenVidsAndTime[vid])) {
