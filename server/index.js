@@ -14,6 +14,13 @@ app.use(bodyParser.json());
 cron.init();
 const seenVidsAndTime = {};
 
+function identicalInfo(a, b) {
+  for (const i of ["name", "title", "time", "vid"]) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
 app.get("/", (req, res) => res.send("Hello World!"));
 
 app.post("/schedule", (req, res) => {
@@ -35,8 +42,15 @@ app.post("/schedule", (req, res) => {
     return;
   }
 
+  let announceData = {
+    name: "星姐",
+    title: req.body.title,
+    time: time,
+    vid: vid
+  };
+
   if (Object.keys(seenVidsAndTime).includes(vid)) {
-    if (Number(targetDate) === Number(seenVidsAndTime[vid])) {
+    if (identicalInfo(seenVidsAndTime[vid], announceData)) {
       // Don't modify it if there's no changes!
       console.log(`${vid}: Identical info has been seen before.`);
       res.sendStatus(304);
@@ -46,14 +60,8 @@ app.post("/schedule", (req, res) => {
   // Clean info
   cron.delCronGroup(vid);
   // Update history info
-  seenVidsAndTime[vid] = targetDate;
+  seenVidsAndTime[vid] = announceData;
 
-  let announceData = {
-    name: "星姐",
-    title: req.body.title,
-    time: time,
-    vid: vid
-  };
   cron.addCron(
     currDate,
     function() {
