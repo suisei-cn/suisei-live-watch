@@ -38,4 +38,16 @@ function announceCast(data, chatid) {
   );
 }
 
-module.exports = { announceCast };
+function announceVid(data, chatid, wasstream = false) {
+  let momentDate = moment(data.time);
+  let dateTzString = momentDate.tz("Asia/Shanghai").format("lll");
+  sendTGMessage(
+    chatid,
+    (wasstream ? `#${data.name}直播录像\n` : `#${data.name}发布新视频\n`) +
+      `${data.title}\n` +
+      `时间：${dateTzString} (CST)\n` +
+      `[视频地址](https://youtu.be/${data.vid})`
+  );
+}
+
+module.exports = { announceCast, announceVid };

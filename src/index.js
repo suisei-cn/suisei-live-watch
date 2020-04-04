@@ -97,10 +97,55 @@ app.post(SUBPATH, async (req, res) => {
       return;
     }
 
-    // Everything is well
     let vid = meta.id;
-    let time = meta.liveStreamingDetails.scheduledStartTime;
     let title = item.title;
+
+    if (!meta.liveStreamingDetails) {
+      // It's a video, not livestream
+      // Well let's post it ONCE.
+      console.log(`${vid} is a video.`);
+      if (!seenVidsAndTime[vid]) {
+        seenVidsAndTime[vid] = {};
+        message.announceVid(
+          {
+            name: topicTitle,
+            title,
+            vid,
+            time: new Date(item.pubDate),
+          },
+          CHAT_ID
+        );
+      }
+      res.sendStatus(200);
+      return;
+    }
+
+    console.log(meta);
+
+    if (meta.liveStreamingDetails.actualEndTime) {
+      // It's now a video...
+      // ALso, let's post it ONCE.
+      console.log(`${vid} has ended.`);
+      if (!seenVidsAndTime[vid]) {
+        seenVidsAndTime[vid] = {};
+        message.announceVid(
+          {
+            name: topicTitle,
+            title,
+            vid,
+            time: new Date(item.pubDate),
+          },
+          CHAT_ID,
+          true
+        );
+      }
+      res.sendStatus(200);
+      return;
+    }
+
+    // Everything is well
+    let time = meta.liveStreamingDetails.scheduledStartTime;
+
     let targetDate = new Date(time);
     let currDate = new Date();
     if (targetDate - currDate > RECORD_TIME_LIMIT) {
