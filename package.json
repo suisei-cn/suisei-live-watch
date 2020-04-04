@@ -8,7 +8,8 @@
     "rss-parser": "^3.7.6"
   },
   "name": "suisei-live-watch-server",
-  "version": "1.1.0",
+  "bin": "bin/www",
+  "version": "1.1.1",
   "description": "Watch and remind Suisei's upcoming livestreams.",
   "main": "index.js",
   "devDependencies": {
