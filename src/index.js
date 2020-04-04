@@ -98,8 +98,6 @@ app.post(SUBPATH, async (req, res) => {
     }
 
     // Everything is well
-    console.log(meta);
-    //
     let vid = meta.id;
     let time = meta.liveStreamingDetails.scheduledStartTime;
     let title = item.title;
