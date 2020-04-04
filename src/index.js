@@ -44,21 +44,20 @@ function listen() {
   app.get(SUBPATH, (req, res) => {
     // Filter PSHB challenges
     // https://pubsubhubbub.github.io/PubSubHubbub/pubsubhubbub-core-0.4.html
-    if (req.get("Content-Type") == "application/x-www-form-urlencoded") {
-      let topic = req.query["hub.topic"] || "";
-      if (Object.values(config.TOPICS || {}).includes(topic)) {
-        let topicTitle = Object.entries(config.TOPICS).filter(
-          (x) => x[1] == topic
-        )[0][0];
-        console.info(`Topic ${topicTitle} challenge passed.`);
-        res.status(200).send(req.query["hub.challenge"]);
-        return;
-      } else {
-        console.info(
-          `Topic challenge failed (topic: ${topic} ). If this is what you want, add this link to "config.json".`
-        );
-      }
+    let topic = req.query["hub.topic"] || "";
+    if (Object.values(config.TOPICS || {}).includes(topic)) {
+      let topicTitle = Object.entries(config.TOPICS).filter(
+        (x) => x[1] == topic
+      )[0][0];
+      console.info(`Topic ${topicTitle} challenge passed.`);
+      res.status(200).send(req.query["hub.challenge"]);
+      return;
+    } else {
+      console.info(
+        `Topic challenge failed (topic: ${topic} ). If this is what you want, add this link to "config.json".`
+      );
     }
+
     res.sendStatus(400);
     return;
   });
