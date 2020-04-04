@@ -1,10 +1,13 @@
 const fetch = require("node-fetch");
-const config = require("./config.json");
 const moment = require("moment");
 require("moment-timezone");
 moment.locale("zh-cn");
 
-const BOT_KEY = config.BOT_KEY;
+var BOT_KEY = "";
+
+function setConfig(conf) {
+  BOT_KEY = conf.BOT_KEY;
+}
 
 async function sendTGMessage(chatid, text) {
   await fetch(`https://api.telegram.org/bot${BOT_KEY}/sendMessage`, {
@@ -50,4 +53,4 @@ function announceVid(data, chatid, wasstream = false) {
   );
 }
 
-module.exports = { announceCast, announceVid };
+module.exports = { announceCast, announceVid, setConfig };

@@ -1,7 +1,12 @@
 var cronList = [];
 var routineID;
-const config = require("./config.json");
-const CHECK_INTERVAL = config.CHECK_INTERVAL || 1000;
+var config = {};
+var CHECK_INTERVAL = 1000;
+
+function setConfig(conf) {
+  config = conf;
+  CHECK_INTERVAL = config.CHECK_INTERVAL || 1000;
+}
 
 function addCron(time, callback, group) {
   let insertSeq = 0;
@@ -50,4 +55,5 @@ module.exports = {
   delCronGroup,
   init,
   deinit,
+  setConfig,
 };
