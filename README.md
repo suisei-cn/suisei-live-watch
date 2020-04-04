@@ -21,7 +21,7 @@ Confige is shown in `config.sample.json`.
   // Note that the ip/domain should be your external IP/domain.
   "CALLBACK_URL": "http://127.0.0.1:3000/test",
 
-  // 2. server port and path key.
+  // (Will override CALLBACK_URL) 2. server port and path key.
   "SERVER_PORT": 3000,
   "PATH_KEY": "/sub",
 
