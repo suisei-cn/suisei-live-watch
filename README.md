@@ -5,7 +5,7 @@
 
 [![](https://nodei.co/npm/yt-watch.png?global=true)](https://nodei.co/npm/yt-watch)
 
-This project has been shifted to a **general-purpose YouTube channel video/live watcher**. It send notifications to Telegram, but it's not complicated to mod this CLI to other chat services.
+This project has been shifted to a **general-purpose YouTube channel video/live watcher**. It sends notifications to Telegram, but it's not complicated to mod this CLI to other chat services.
 
 Still, it's initially aimed at watching [Hosimati Suisei](https://www.youtube.com/channel/UC5CwaMl1eIgY8h02uZw7u8A)'s YouTube livestreams. But you know.. she's just not used to schedule her livestreams on YouTube. We are considering fetching directly from [Hololive website](https://schedule.hololive.tv/), but that's another story...
 
