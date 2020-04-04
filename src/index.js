@@ -71,12 +71,12 @@ function listen() {
     });
     if (!parsingDone) {
       // Normally we SHOULD NOT return 400 in this case...
-      res.sendStatus(400);
+      res.status(200).send("bad_rss");
       return;
     }
     if (!Object.values(config.TOPICS || {}).includes(body.feedUrl)) {
       // This is not what we want
-      res.sendStatus(200);
+      res.status(200).send("bad_topic");
       return;
     }
     let topicTitle = Object.entries(config.TOPICS).filter(
@@ -96,7 +96,7 @@ function listen() {
         });
       if (meta === undefined) {
         // Upstream API error but we still give 200
-        res.sendStatus(200);
+        res.status(200).send("no_info_from_youtube");
         return;
       }
 
@@ -119,7 +119,7 @@ function listen() {
             CHAT_ID
           );
         }
-        res.sendStatus(200);
+        res.status(200).send("video");
         return;
       }
 
@@ -140,7 +140,7 @@ function listen() {
             true
           );
         }
-        res.sendStatus(200);
+        res.status(200).send("finished_livestream");
         return;
       }
 
@@ -151,7 +151,7 @@ function listen() {
       let currDate = new Date();
       if (targetDate - currDate > RECORD_TIME_LIMIT) {
         console.log(`${vid}: Schedule too far away. Ignoring.`);
-        res.sendStatus(304);
+        res.status(200).send("too_far_away");
         return;
       }
       let announceData = {
@@ -167,7 +167,7 @@ function listen() {
       ) {
         // Don't modify it if there's no changes!
         console.log(`${vid}: Identical info has been seen before.`);
-        res.sendStatus(200);
+        res.status(200).send("no_change");
         return;
       }
 
@@ -185,7 +185,7 @@ function listen() {
       );
       if (targetDate - 30 * 60 * 1000 <= currDate) {
         console.log(`Less than 30 minutes to this stream. Ignoring this cron.`);
-        res.sendStatus(200);
+        res.status(200).send("about_to_start");
         return;
       }
       cron.addCron(
@@ -203,7 +203,7 @@ function listen() {
 
       if (targetDate - 3 * 60 * 60 * 1000 <= currDate) {
         console.log(`Less than 3 hours to this stream. Ignoring this cron.`);
-        res.sendStatus(200);
+        res.status(200).send("soon_to_start");
         return;
       }
       cron.addCron(
@@ -220,7 +220,7 @@ function listen() {
       );
     }
 
-    res.sendStatus(200);
+    res.status(200).send("ack");
     return;
   });
 }
