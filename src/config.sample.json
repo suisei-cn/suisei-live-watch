@@ -1,0 +1,12 @@
+{
+  "CHAT_ID": 0,
+  "BOT_KEY": "BOT_KEY",
+  "CHECK_INTERVAL": 1000,
+  "CALLBACK_URL": "http://127.0.0.1:3000/test",
+  "SERVER_PORT": 3000,
+  "PATH_KEY": "/sub",
+  "YOUTUBE_API_KEY": "",
+  "TOPICS": {
+    "星姐": "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC5CwaMl1eIgY8h02uZw7u8A"
+  }
+}

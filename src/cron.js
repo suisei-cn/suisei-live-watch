@@ -12,13 +12,13 @@ function addCron(time, callback, group) {
   cronList.splice(insertSeq, 0, {
     time,
     callback,
-    group
+    group,
   });
 }
 
 function delCronGroup(group) {
   console.log(`All cron deleted for ${group}`);
-  cronList = cronList.filter(x => x.group !== group);
+  cronList = cronList.filter((x) => x.group !== group);
 }
 
 function init() {
@@ -49,5 +49,5 @@ module.exports = {
   addCron,
   delCronGroup,
   init,
-  deinit
+  deinit,
 };

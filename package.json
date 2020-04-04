@@ -4,15 +4,22 @@
     "express": "^4.17.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "rss-parser": "^3.7.6"
   },
   "name": "suisei-live-watch-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Watch and remind Suisei's upcoming livestreams.",
   "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "eslint": "^6.8.0",
+    "mocha": "^7.1.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./bin/www",
+    "test": "mocha --exit"
   },
   "repository": {
     "type": "git",
