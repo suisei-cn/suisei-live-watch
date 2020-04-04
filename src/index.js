@@ -123,8 +123,6 @@ function listen() {
         return;
       }
 
-      console.log(meta);
-
       if (meta.liveStreamingDetails.actualEndTime) {
         // It's now a video...
         // ALso, let's post it ONCE.
