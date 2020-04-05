@@ -16,16 +16,17 @@ const args = arg({
 
   // Aliases
   "-c": "--config",
+  "-v": "--version",
   "-s": "--subscribe",
 });
 
 if (args["--help"]) {
   console.log(`
-  suisei-live-watch --config config_file [--version] [--subscribe]
+  suisei-live-watch --config file [--version] [--subscribe]
 
-  --config config_file : Load the config.
-  --version            : Show package version.
-  --subscribe          : Send subscription requests to PSHB servers.`);
+  --config file, -c file : Load the config.
+  --version, -v          : Show package version.
+  --subscribe, -s        : Send subscription requests to PSHB servers.`);
   process.exit(0);
 } else if (args["--version"]) {
   console.log(JSON.parse(fs.readFileSync("../package.json")).version);
