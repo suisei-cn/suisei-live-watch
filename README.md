@@ -45,6 +45,13 @@ Configure is shown in `config.sample.json`.
   // Allowed topics.
   "TOPICS": {
     "星姐": "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC5CwaMl1eIgY8h02uZw7u8A"
+  },
+
+  // Allowed sub-topics. Only send notifications when the keyword appears in video title or description.
+  "SIDE_TOPICS": {
+    "星街": [
+      "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC8NZiqKx6fsDT3AVcMiVFyA"
+    ]
   }
 }
 ```

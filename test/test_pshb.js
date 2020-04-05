@@ -19,14 +19,34 @@ describe("PSHB Challenges", function () {
         星姐:
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC5CwaMl1eIgY8h02uZw7u8A",
       },
+      SIDE_TOPICS: {
+        星街: [
+          "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC8NZiqKx6fsDT3AVcMiVFyA",
+        ],
+      },
     });
   });
-  it("should accept right challenges", (done) => {
+  it("should accept right challenges (topic)", (done) => {
     chai
       .request(server)
       .get(
         "/sub?hub.topic=https%3A%2F%2Fwww.youtube.com%2Fxml%2Ffeeds%2Fvideos.xml%3Fchannel_id%3DUC5CwaMl1eIgY8h02uZw7u8A&hub.challenge=challenge"
       )
+      .send({})
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.text.should.equal("challenge");
+        done();
+      });
+  });
+
+  it("should accept right challenges (side-topic)", (done) => {
+    chai
+      .request(server)
+      .get(
+        "/sub?hub.topic=https%3A%2F%2Fwww.youtube.com%2Fxml%2Ffeeds%2Fvideos.xml%3Fchannel_id%3DUC8NZiqKx6fsDT3AVcMiVFyA&hub.challenge=challenge"
+      )
+      .set("content-type", "application/x-www-form-urlencoded")
       .send({})
       .end((err, res) => {
         res.should.have.status(200);

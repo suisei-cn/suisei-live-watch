@@ -42,6 +42,11 @@ describe("Message processing", function () {
         星姐:
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC5CwaMl1eIgY8h02uZw7u8A",
       },
+      SIDE_TOPICS: {
+        星街: [
+          "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC8NZiqKx6fsDT3AVcMiVFyA",
+        ],
+      },
     });
   });
   it("should handle bad RSS", (done) => {
@@ -61,7 +66,7 @@ describe("Message processing", function () {
       .request(server)
       .post("/sub")
       .set("content-type", "application/atom+xml")
-      .send(generatePayloadForVideoID("",""))
+      .send(generatePayloadForVideoID("", ""))
       .end((err, res) => {
         res.should.have.status(200);
         res.text.should.equal("bad_topic");
@@ -113,6 +118,34 @@ describe("Message processing", function () {
       .end((err, res) => {
         res.should.have.status(200);
         res.text.should.equal("too_far_away");
+        done();
+      });
+  });
+  it("should properly process non-keyword sub-topic", (done) => {
+    chai
+      .request(server)
+      .post("/sub")
+      .set("content-type", "application/atom+xml")
+      .send(
+        generatePayloadForVideoID("TZMDMFy1Phw", "UC8NZiqKx6fsDT3AVcMiVFyA")
+      ) // Sub-topic video not related to keyword
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.text.should.equal("thx_but_not_useful");
+        done();
+      });
+  });
+  it("should properly process keyword sub-topic", (done) => {
+    chai
+      .request(server)
+      .post("/sub")
+      .set("content-type", "application/atom+xml")
+      .send(
+        generatePayloadForVideoID("0HZJTIzy4aE", "UC8NZiqKx6fsDT3AVcMiVFyA")
+      ) // Sub-topic video not related to keyword
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.text.should.equal("finished_livestream");
         done();
       });
   });

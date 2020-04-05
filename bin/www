@@ -70,10 +70,14 @@ app.listen(SERVER_PORT, () =>
 );
 
 if (args["--subscribe"]) {
+  const validTopics = [].concat(
+    ...[...Object.values(config.SIDE_TOPICS || {})],
+    ...Object.values(config.TOPICS || {})
+  );
   if (!config.CALLBACK_URL) {
     console.log("No CALLBACK_URL present. Cannot subscribe.");
   } else {
-    for (let [key, val] of Object.entries(config.TOPICS || {})) {
+    for (let topic of validTopics) {
       fetch("https://pubsubhubbub.appspot.com/subscribe", {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -81,15 +85,15 @@ if (args["--subscribe"]) {
         body: `hub.callback=${encodeURIComponent(
           config.CALLBACK_URL
         )}&hub.topic=${encodeURIComponent(
-          val
+          topic
         )}&hub.verify=async&hub.mode=subscribe"`,
         method: "POST",
       })
         .then(() => {
-          console.log(`Subscription request sent for ${key}`);
+          console.log(`Subscription request sent for ${topic}`);
         })
         .catch((err) => {
-          console.log(`Subscription request failed for ${key}: ${err}`);
+          console.log(`Subscription request failed for ${topic}: ${err}`);
         });
     }
   }

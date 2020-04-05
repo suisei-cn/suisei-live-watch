@@ -1,8 +1,10 @@
 const fetch = require("node-fetch");
 
-async function getVideoInfo(videoId, apikey) {
+async function getVideoInfo(videoId, apikey, wantSnippet) {
   let resp = await fetch(
-    `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${videoId}&key=${apikey}&fields=items(id,liveStreamingDetails)`,
+    `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails${
+      wantSnippet ? ",snippet" : ""
+    }&id=${videoId}&key=${apikey}&fields=items(id,snippet,liveStreamingDetails)`,
     {
       method: "GET",
       headers: {

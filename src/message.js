@@ -29,12 +29,14 @@ function announceCast(data, chatid) {
   sendTGMessage(
     chatid,
     data.time_left
-      ? `#${data.name}直播预告\n` +
+      ? `#${data.name}直播预告 ${data.fromSubtopic ? "#联动" : ""}\n` +
           `距离${data.name}直播还有${data.time_left}。\n` +
           `${data.title}\n` +
           `时间：${dateTzString} (CST)\n` +
           `[直播地址](https://youtu.be/${data.vid})`
-      : `#${data.name}直播预告 #新直播计划\n` +
+      : `#${data.name}直播预告 ${
+          data.fromSubtopic ? "#联动 " : ""
+        }#新直播计划\n` +
           `${data.title}\n` +
           `时间：${dateTzString} (CST)\n` +
           `[直播地址](https://youtu.be/${data.vid})`
@@ -46,7 +48,9 @@ function announceVid(data, chatid, wasstream = false) {
   let dateTzString = momentDate.tz("Asia/Shanghai").format("lll");
   sendTGMessage(
     chatid,
-    (wasstream ? `#${data.name}直播录像\n` : `#${data.name}发布新视频\n`) +
+    (wasstream
+      ? `#${data.name}直播录像 ${data.fromSubtopic ? "#联动" : ""}\n`
+      : `#${data.name}发布新视频 ${data.fromSubtopic ? "#联动" : ""}\n`) +
       `${data.title}\n` +
       `时间：${dateTzString} (CST)\n` +
       `[视频地址](https://youtu.be/${data.vid})`

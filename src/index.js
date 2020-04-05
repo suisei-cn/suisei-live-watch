@@ -41,20 +41,30 @@ function listen() {
     return true;
   }
 
+  // Sometime I really miss flatten
+  const validTopics = [].concat(
+    ...[...Object.values(config.SIDE_TOPICS || {})],
+    ...Object.values(config.TOPICS || {})
+  );
+
   app.get(SUBPATH, (req, res) => {
     // Filter PSHB challenges
     // https://pubsubhubbub.github.io/PubSubHubbub/pubsubhubbub-core-0.4.html
     let topic = req.query["hub.topic"] || "";
-    if (Object.values(config.TOPICS || {}).includes(topic)) {
-      let topicTitle = Object.entries(config.TOPICS).filter(
-        (x) => x[1] == topic
-      )[0][0];
-      console.info(`Topic ${topicTitle} challenge passed.`);
+    if (validTopics.includes(topic)) {
+      if (Object.values(config.TOPICS || {}).includes(topic)) {
+        let topicTitle = Object.entries(config.TOPICS).filter(
+          (x) => x[1] == topic
+        )[0][0];
+        console.info(`Topic ${topicTitle} challenge passed.`);
+      } else {
+        console.info(`Side-topic (id: ${topic}) challenge passed.`);
+      }
       res.status(200).send(req.query["hub.challenge"]);
       return;
     } else {
       console.info(
-        `Topic challenge failed (topic: ${topic} ). If this is what you want, add this link to "config.json".`
+        `Topic challenge failed (topic: ${topic}). If this is what you want, add this link to "config.json".`
       );
     }
 
@@ -73,18 +83,29 @@ function listen() {
       res.status(200).send("bad_rss");
       return;
     }
-    if (!Object.values(config.TOPICS || {}).includes(body.feedUrl)) {
+    if (!validTopics.includes(body.feedUrl)) {
       // This is not what we want
       res.status(200).send("bad_topic");
       return;
     }
-    let topicTitle = Object.entries(config.TOPICS).filter(
-      (x) => x[1] == body.feedUrl
-    )[0][0];
+
+    let topicTitle;
+    let fromSubtopic = false;
+    if (Object.values(config.TOPICS || {}).includes(body.feedUrl)) {
+      topicTitle = Object.entries(config.TOPICS).filter(
+        (x) => x[1] == body.feedUrl
+      )[0][0];
+    } else {
+      fromSubtopic = true;
+      topicTitle = Object.entries(config.SIDE_TOPICS).filter((x) =>
+        x[1].includes(body.feedUrl)
+      )[0][0];
+    }
+
     for (const item of body.items) {
       if (!item.videoId || !item.channelId) continue;
       let meta = await ytAPI
-        .getVideoInfo(item.videoId, config.YOUTUBE_API_KEY || "")
+        .getVideoInfo(item.videoId, config.YOUTUBE_API_KEY || "", fromSubtopic)
         .catch((e) => {
           console.error(
             `YouTube API Error when requesting ${item.videoId}:`,
@@ -97,6 +118,17 @@ function listen() {
         // Upstream API error but we still give 200
         res.status(200).send("no_info_from_youtube");
         return;
+      }
+
+      if (fromSubtopic) {
+        if (
+          !meta.snippet.title.includes(topicTitle) &&
+          !meta.snippet.description.includes(topicTitle)
+        ) {
+          // It's not related
+          res.status(200).send("thx_but_not_useful");
+          return;
+        }
       }
 
       let vid = meta.id;
@@ -114,6 +146,7 @@ function listen() {
               title,
               vid,
               time: new Date(item.pubDate),
+              fromSubtopic
             },
             CHAT_ID
           );
@@ -134,6 +167,7 @@ function listen() {
               title,
               vid,
               time: new Date(item.pubDate),
+              fromSubtopic
             },
             CHAT_ID,
             true
@@ -158,6 +192,7 @@ function listen() {
         title: title,
         time: time,
         vid: vid,
+        fromSubtopic
       };
 
       if (
