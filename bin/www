@@ -82,11 +82,7 @@ if (args["--subscribe"]) {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `hub.callback=${encodeURIComponent(
-          config.CALLBACK_URL
-        )}&hub.topic=${encodeURIComponent(
-          topic
-        )}&hub.verify=async&hub.mode=subscribe"`,
+        body: `hub.callback=${config.CALLBACK_URL}&hub.topic=${topic}&hub.verify=async&hub.mode=subscribe"`,
         method: "POST",
       })
         .then(() => {
