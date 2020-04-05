@@ -78,11 +78,17 @@ if (args["--subscribe"]) {
     console.log("No CALLBACK_URL present. Cannot subscribe.");
   } else {
     for (let topic of validTopics) {
+      let urlencoded = new URLSearchParams();
+      urlencoded.append("hub.callback", config.CALLBACK_URL);
+      urlencoded.append("hub.verify", "async");
+      urlencoded.append("hub.mode", "subscribe");
+      urlencoded.append("hub.topic", topic);
+
       fetch("https://pubsubhubbub.appspot.com/subscribe", {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `hub.callback=${config.CALLBACK_URL}&hub.topic=${topic}&hub.verify=async&hub.mode=subscribe"`,
+        body: urlencoded,
         method: "POST",
       })
         .then(() => {
