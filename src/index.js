@@ -146,7 +146,7 @@ function listen() {
               title,
               vid,
               time: new Date(item.pubDate),
-              fromSubtopic
+              fromSubtopic,
             },
             CHAT_ID
           );
@@ -167,7 +167,7 @@ function listen() {
               title,
               vid,
               time: new Date(item.pubDate),
-              fromSubtopic
+              fromSubtopic,
             },
             CHAT_ID,
             true
@@ -192,7 +192,7 @@ function listen() {
         title: title,
         time: time,
         vid: vid,
-        fromSubtopic
+        fromSubtopic,
       };
 
       if (
@@ -262,7 +262,7 @@ function listen() {
 function updateConfigAndInit(conf) {
   config = conf;
   listen();
-  console.log("Accepting", config.TOPICS);
+  console.log("Accepting", config.TOPICS, config.SIDE_TOPICS);
   cron.setConfig(conf);
   message.setConfig(conf);
 }
