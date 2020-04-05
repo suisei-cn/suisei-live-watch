@@ -43,7 +43,7 @@ function listen() {
 
   // Sometime I really miss flatten
   const validTopics = [].concat(
-    ...[...Object.values(config.SIDE_TOPICS || {})],
+    ...[...Object.values(config.SUB_TOPICS || {})],
     ...Object.values(config.TOPICS || {})
   );
 
@@ -97,7 +97,7 @@ function listen() {
       )[0][0];
     } else {
       fromSubtopic = true;
-      topicTitle = Object.entries(config.SIDE_TOPICS).filter((x) =>
+      topicTitle = Object.entries(config.SUB_TOPICS).filter((x) =>
         x[1].includes(body.feedUrl)
       )[0][0];
     }
@@ -262,7 +262,7 @@ function listen() {
 function updateConfigAndInit(conf) {
   config = conf;
   listen();
-  console.log("Accepting", config.TOPICS, config.SIDE_TOPICS);
+  console.log("Accepting", config.TOPICS, config.SUB_TOPICS);
   cron.setConfig(conf);
   message.setConfig(conf);
 }

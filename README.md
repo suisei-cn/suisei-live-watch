@@ -48,7 +48,7 @@ Configure is shown in `config.sample.json`.
   },
 
   // Allowed sub-topics. Only send notifications when the keyword appears in video title or description.
-  "SIDE_TOPICS": {
+  "SUB_TOPICS": {
     "星街": [
       "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC8NZiqKx6fsDT3AVcMiVFyA"
     ]

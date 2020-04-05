@@ -19,7 +19,7 @@ describe("PSHB Challenges", function () {
         星姐:
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC5CwaMl1eIgY8h02uZw7u8A",
       },
-      SIDE_TOPICS: {
+      SUB_TOPICS: {
         星街: [
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC8NZiqKx6fsDT3AVcMiVFyA",
         ],

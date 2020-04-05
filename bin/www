@@ -71,7 +71,7 @@ app.listen(SERVER_PORT, () =>
 
 if (args["--subscribe"]) {
   const validTopics = [].concat(
-    ...[...Object.values(config.SIDE_TOPICS || {})],
+    ...[...Object.values(config.SUB_TOPICS || {})],
     ...Object.values(config.TOPICS || {})
   );
   if (!config.CALLBACK_URL) {
