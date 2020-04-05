@@ -27,7 +27,6 @@ describe("PSHB Challenges", function () {
       .get(
         "/sub?hub.topic=https%3A%2F%2Fwww.youtube.com%2Fxml%2Ffeeds%2Fvideos.xml%3Fchannel_id%3DUC5CwaMl1eIgY8h02uZw7u8A&hub.challenge=challenge"
       )
-      .set("content-type", "application/x-www-form-urlencoded")
       .send({})
       .end((err, res) => {
         res.should.have.status(200);
@@ -42,7 +41,6 @@ describe("PSHB Challenges", function () {
       .get(
         "/4213?hub.topic=https%3A%2F%2Fwww.youtube.com%2Fxml%2Ffeeds%2Fvideos.xml%3Fchannel_id%3DUCDqI2jOz0weumE8s7paEk6g&hub.challenge=challenge"
       )
-      .set("content-type", "application/x-www-form-urlencoded")
       .send({})
       .end((err, res) => {
         res.should.have.status(404);
