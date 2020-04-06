@@ -105,7 +105,11 @@ function listen() {
     for (const item of body.items) {
       if (!item.videoId || !item.channelId) continue;
       let meta = await ytAPI
-        .getVideoInfo(item.videoId, config.YOUTUBE_API_KEY || "", fromSubtopic)
+        .getVideoInfo(
+          item.videoId,
+          config.YOUTUBE_API_KEY || "",
+          fromSubtopic || config.POST_FETCH
+        )
         .catch((e) => {
           console.error(
             `YouTube API Error when requesting ${item.videoId}:`,
@@ -118,6 +122,15 @@ function listen() {
         // Upstream API error but we still give 200
         res.status(200).send("no_info_from_youtube");
         return;
+      }
+
+      if (config.POST_FETCH) {
+        try {
+          const pf = require(config.POST_FETCH);
+          pf(Object.assign({}, item, meta));
+        } catch (e) {
+          console.warn(`post_fetch hook failed: ${e}`);
+        }
       }
 
       if (fromSubtopic) {
@@ -134,63 +147,10 @@ function listen() {
       let vid = meta.id;
       let title = item.title;
 
-      if (!meta.liveStreamingDetails) {
-        // It's a video, not livestream
-        // Well let's post it ONCE.
-        console.log(`${vid} is a video.`);
-        if (!seenVidsAndTime[vid]) {
-          seenVidsAndTime[vid] = {};
-          message.announceVid(
-            {
-              name: topicTitle,
-              title,
-              vid,
-              time: new Date(item.pubDate),
-              fromSubtopic,
-            },
-            CHAT_ID
-          );
-        }
-        res.status(200).send("video");
-        return;
-      }
-
-      if (meta.liveStreamingDetails.actualEndTime) {
-        // It's now a video...
-        // ALso, let's post it ONCE.
-        console.log(`${vid} has ended.`);
-        if (!seenVidsAndTime[vid]) {
-          seenVidsAndTime[vid] = {};
-          message.announceVid(
-            {
-              name: topicTitle,
-              title,
-              vid,
-              time: new Date(item.pubDate),
-              fromSubtopic,
-            },
-            CHAT_ID,
-            true
-          );
-        }
-        res.status(200).send("finished_livestream");
-        return;
-      }
-
-      // Everything is well
-      let time = meta.liveStreamingDetails.scheduledStartTime;
-
-      let targetDate = new Date(time);
-      let currDate = new Date();
-      if (targetDate - currDate > RECORD_TIME_LIMIT) {
-        console.log(`${vid}: Schedule too far away. Ignoring.`);
-        res.status(200).send("too_far_away");
-        return;
-      }
       let announceData = {
         name: topicTitle,
         title: title,
-        time: time,
+        time: new Date(item.pubDate),
         vid: vid,
         fromSubtopic,
       };
@@ -209,6 +169,41 @@ function listen() {
       cron.delCronGroup(vid);
       // Update history info
       seenVidsAndTime[vid] = announceData;
+
+      if (!meta.liveStreamingDetails) {
+        // It's a video, not livestream
+        // Well let's post it ONCE.
+        console.log(`${vid} is a video.`);
+        if (!seenVidsAndTime[vid]) {
+          seenVidsAndTime[vid] = {};
+          message.announceVid(announceData, CHAT_ID);
+        }
+        res.status(200).send("video");
+        return;
+      }
+
+      if (meta.liveStreamingDetails.actualEndTime) {
+        // It's now a video...
+        // ALso, let's post it ONCE.
+        console.log(`${vid} has ended.`);
+        if (!seenVidsAndTime[vid]) {
+          seenVidsAndTime[vid] = {};
+          message.announceVid(announceData, CHAT_ID, true);
+        }
+        res.status(200).send("finished_livestream");
+        return;
+      }
+
+      // Everything is well
+      let time = meta.liveStreamingDetails.scheduledStartTime;
+      let targetDate = new Date(time);
+      announceData.time = targetDate;
+      let currDate = new Date();
+      if (targetDate - currDate > RECORD_TIME_LIMIT) {
+        console.log(`${vid}: Schedule too far away. Ignoring.`);
+        res.status(200).send("too_far_away");
+        return;
+      }
 
       cron.addCron(
         currDate,

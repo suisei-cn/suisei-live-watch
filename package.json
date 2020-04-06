@@ -10,7 +10,7 @@
   },
   "name": "yt-watch",
   "bin": "bin/www",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "General-purpose YouTube live/video notification to Telegram.",
   "main": "index.js",
   "devDependencies": {
