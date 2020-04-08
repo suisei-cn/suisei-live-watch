@@ -5,26 +5,11 @@ const main = require("../src/index");
 chai.use(chaiHttp);
 const should = require("chai").should();
 const server = main.app;
+const init = require("./utils");
 
 describe("PSHB Challenges", function () {
   before(() => {
-    main.updateConfigAndInit({
-      CHAT_ID: -1,
-      BOT_KEY: "",
-      CHECK_INTERVAL: 1000,
-      SERVER_PORT: 3000,
-      PATH_KEY: "/sub",
-      YOUTUBE_API_KEY: "",
-      TOPICS: {
-        星姐:
-          "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC5CwaMl1eIgY8h02uZw7u8A",
-      },
-      SUB_TOPICS: {
-        星街: [
-          "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC8NZiqKx6fsDT3AVcMiVFyA",
-        ],
-      },
-    });
+    init(main);
   });
   it("should accept right challenges (topic)", (done) => {
     chai
