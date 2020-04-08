@@ -10,51 +10,81 @@ function setConfig(conf) {
 }
 
 async function sendTGMessage(chatid, text) {
-  await fetch(`https://api.telegram.org/bot${BOT_KEY}/sendMessage`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-    },
-    body: JSON.stringify({
-      chat_id: chatid,
-      text: text,
-      parse_mode: "markdown",
-    }),
-  });
+  let result = await fetch(
+    `https://api.telegram.org/bot${BOT_KEY}/sendMessage`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({
+        chat_id: chatid,
+        text: text,
+        parse_mode: "markdown",
+      }),
+    }
+  ).then((x) => x.json());
+  return result.result.message_id;
 }
 
-function announceCast(data, chatid) {
-  let momentDate = moment(data.time);
-  let dateTzString = momentDate.tz("Asia/Shanghai").format("lll");
-  sendTGMessage(
-    chatid,
-    data.time_left
-      ? `#${data.name}直播预告 ${data.fromSubtopic ? "#联动" : ""}\n` +
-          `距离${data.name}直播还有${data.time_left}。\n` +
-          `${data.title}\n` +
-          `时间：${dateTzString} (CST)\n` +
-          `[直播地址](https://youtu.be/${data.vid})`
-      : `#${data.name}直播预告 ${
-          data.fromSubtopic ? "#联动 " : ""
-        }#新直播计划\n` +
-          `${data.title}\n` +
-          `时间：${dateTzString} (CST)\n` +
-          `[直播地址](https://youtu.be/${data.vid})`
-  );
+async function editTGMessage(chatid, msgid, text) {
+  let result = await fetch(
+    `https://api.telegram.org/bot${BOT_KEY}/editMessageText`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({
+        chat_id: chatid,
+        message_id: msgid,
+        text: text,
+        parse_mode: "markdown",
+      }),
+    }
+  ).then((x) => x.json());
+  return result.result.message_id;
 }
 
-function announceVid(data, chatid, wasstream = false) {
+async function announceCast(data, chatid, oldmsgid) {
   let momentDate = moment(data.time);
   let dateTzString = momentDate.tz("Asia/Shanghai").format("lll");
-  sendTGMessage(
-    chatid,
+  let msgText = data.time_left
+    ? `#${data.name}直播预告 ${data.fromSubtopic ? "#联动" : ""}\n` +
+      `距离${data.name}直播还有${data.time_left}。\n` +
+      `${data.title}\n` +
+      `时间：${dateTzString} (CST)\n` +
+      `[直播地址](https://youtu.be/${data.vid})`
+    : `#${data.name}直播预告 ${
+        data.fromSubtopic ? "#联动 " : ""
+      }#新直播计划\n` +
+      `${data.title}\n` +
+      `时间：${dateTzString} (CST)\n` +
+      `[直播地址](https://youtu.be/${data.vid})`;
+  if (oldmsgid) {
+    return await editTGMessage(chatid, oldmsgid, msgText);
+  } else {
+    return await sendTGMessage(chatid, msgText);
+  }
+}
+
+async function announceVid(data, chatid, oldmsgid, wasstream = false) {
+  let momentDate = moment(data.time);
+  let dateTzString = momentDate.tz("Asia/Shanghai").format("lll");
+  let msgText =
     (wasstream
       ? `#${data.name}直播录像 ${data.fromSubtopic ? "#联动" : ""}\n`
       : `#${data.name}发布新视频 ${data.fromSubtopic ? "#联动" : ""}\n`) +
-      `${data.title}\n` +
-      `时间：${dateTzString} (CST)\n` +
-      `[视频地址](https://youtu.be/${data.vid})`
-  );
+    `${data.title}\n` +
+    `时间：${dateTzString} (CST)\n` +
+    `[视频地址](https://youtu.be/${data.vid})`;
+  let r;
+  if (oldmsgid) {
+    r = await editTGMessage(chatid, oldmsgid, msgText);
+  } else {
+    r = await sendTGMessage(chatid, msgText);
+  }
+  return r;
 }
 
 module.exports = { announceCast, announceVid, setConfig };

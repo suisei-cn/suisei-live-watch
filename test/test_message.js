@@ -7,7 +7,12 @@ const should = require("chai").should();
 const server = main.app;
 const init = require("./utils");
 
-function generatePayloadForVideoID(vid, channel = "UC5CwaMl1eIgY8h02uZw7u8A") {
+function generatePayloadForVideoID(
+  vid,
+  channel = "UC5CwaMl1eIgY8h02uZw7u8A",
+  time = "2015-03-09T19:05:24.552394234+00:00"
+) {
+  let timestr = new Date(time).toISOString();
   return `<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
     xmlns="http://www.w3.org/2005/Atom">
 <link rel="hub" href="https://pubsubhubbub.appspot.com"/>
@@ -18,13 +23,13 @@ function generatePayloadForVideoID(vid, channel = "UC5CwaMl1eIgY8h02uZw7u8A") {
 <id>yt:video:${vid}</id>
 <yt:videoId>${vid}</yt:videoId>
 <yt:channelId>${channel}</yt:channelId>
-<title>Video title</title>
+<title>FOR_TESTING_ONLY</title>
 <link rel="alternate" href="http://www.youtube.com/watch?v=${vid}"/>
 <author>
 <name>Channel name</name>
 <uri>http://www.youtube.com/channel/${channel}</uri>
 </author>
-<published>2015-03-06T21:40:57+00:00</published>
+<published>${timestr}</published>
 <updated>2015-03-09T19:05:24.552394234+00:00</updated>
 </entry>
 </feed>`;
@@ -79,6 +84,7 @@ describe("Message processing", function () {
       .end((err, res) => {
         res.should.have.status(200);
         res.text.should.equal("video");
+        main.seenVidsAndTime["3cqV5BKJHyk"].should.have.property("lastMsg");
         done();
       });
   });
@@ -91,6 +97,7 @@ describe("Message processing", function () {
       .end((err, res) => {
         res.should.have.status(200);
         res.text.should.equal("finished_livestream");
+        main.seenVidsAndTime["vQHVGXdcqEQ"].should.have.property("lastMsg");
         done();
       });
   });
@@ -131,6 +138,7 @@ describe("Message processing", function () {
       .end((err, res) => {
         res.should.have.status(200);
         res.text.should.equal("finished_livestream");
+        main.seenVidsAndTime["0HZJTIzy4aE"].should.have.property("lastMsg");
         done();
       });
   });

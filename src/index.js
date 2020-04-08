@@ -25,14 +25,16 @@ const options = {
 const app = express();
 app.use(bodyParser.text(options));
 
+const seenVidsAndTime = {};
+
 function listen() {
   const CHAT_ID = config.CHAT_ID;
   const SUBPATH = utils.getSubpath(config);
   const RECORD_TIME_LIMIT =
     config.RECORD_TIME_LIMIT || 90 * 24 * 60 * 60 * 1000;
+  const EDIT_PREVIOUS_MESSAGE_IN = config.EDIT_PREVIOUS_MESSAGE_IN || 1000;
 
   cron.init();
-  const seenVidsAndTime = {};
 
   function identicalInfo(a, b) {
     for (const i of ["name", "title", "time", "vid"]) {
@@ -167,16 +169,27 @@ function listen() {
 
       // Clean info
       cron.delCronGroup(vid);
-      // Update history info
-      seenVidsAndTime[vid] = announceData;
+      // Last latest message
+      let lastMsgId = seenVidsAndTime[vid]
+        ? seenVidsAndTime[vid].lastMsg
+        : false;
 
       if (!meta.liveStreamingDetails) {
         // It's a video, not livestream
         // Well let's post it ONCE.
         console.log(`${vid} is a video.`);
         if (!seenVidsAndTime[vid]) {
-          seenVidsAndTime[vid] = {};
-          message.announceVid(announceData, CHAT_ID);
+          let msgid = await message.announceVid(
+            announceData,
+            CHAT_ID,
+            lastMsgId
+          );
+          seenVidsAndTime[vid] = {
+            lastMsg: msgid,
+          };
+          setTimeout(() => {
+            seenVidsAndTime[vid].lastMsg = undefined;
+          }, EDIT_PREVIOUS_MESSAGE_IN);
         }
         res.status(200).send("video");
         return;
@@ -187,16 +200,29 @@ function listen() {
         // ALso, let's post it ONCE.
         console.log(`${vid} has ended.`);
         if (!seenVidsAndTime[vid]) {
-          seenVidsAndTime[vid] = {};
-          message.announceVid(announceData, CHAT_ID, true);
+          let msgid = await message.announceVid(
+            announceData,
+            CHAT_ID,
+            lastMsgId,
+            true
+          );
+          seenVidsAndTime[vid] = {
+            lastMsg: msgid,
+          };
+
+          setTimeout(() => {
+            seenVidsAndTime[vid].lastMsg = undefined;
+          }, EDIT_PREVIOUS_MESSAGE_IN);
         }
         res.status(200).send("finished_livestream");
         return;
       }
 
+      // Update history info
+      seenVidsAndTime[vid] = announceData;
+
       // Everything is well
-      let time = meta.liveStreamingDetails.scheduledStartTime;
-      let targetDate = new Date(time);
+      let targetDate = new Date(meta.liveStreamingDetails.scheduledStartTime);
       announceData.time = targetDate;
       let currDate = new Date();
       if (targetDate - currDate > RECORD_TIME_LIMIT) {
@@ -207,8 +233,16 @@ function listen() {
 
       cron.addCron(
         currDate,
-        function () {
-          message.announceCast(announceData, CHAT_ID);
+        async function () {
+          let msgid = await message.announceCast(
+            announceData,
+            CHAT_ID,
+            lastMsgId
+          );
+          seenVidsAndTime[vid].lastMsg = msgid;
+          setTimeout(() => {
+            seenVidsAndTime[vid].lastMsg = undefined;
+          }, EDIT_PREVIOUS_MESSAGE_IN);
         },
         vid
       );
@@ -219,13 +253,19 @@ function listen() {
       }
       cron.addCron(
         targetDate - 30 * 60 * 1000,
-        function () {
-          message.announceCast(
+        async function () {
+          let msgid = message.announceCast(
             Object.assign(announceData, {
               time_left: "30分钟",
             }),
-            CHAT_ID
+            CHAT_ID,
+            lastMsgId
           );
+          seenVidsAndTime[vid].lastMsg = msgid;
+          console.log(EDIT_PREVIOUS_MESSAGE_IN);
+          setTimeout(() => {
+            seenVidsAndTime[vid].lastMsg = undefined;
+          }, EDIT_PREVIOUS_MESSAGE_IN);
         },
         vid
       );
@@ -237,13 +277,18 @@ function listen() {
       }
       cron.addCron(
         targetDate - 3 * 60 * 60 * 1000,
-        function () {
-          message.announceCast(
+        async function () {
+          let msgid = await message.announceCast(
             Object.assign(announceData, {
               time_left: "3小时",
             }),
-            CHAT_ID
+            CHAT_ID,
+            lastMsgId
           );
+          seenVidsAndTime[vid].lastMsg = msgid;
+          setTimeout(() => {
+            seenVidsAndTime[vid].lastMsg = undefined;
+          }, EDIT_PREVIOUS_MESSAGE_IN);
         },
         vid
       );
@@ -265,4 +310,5 @@ function updateConfigAndInit(conf) {
 module.exports = {
   app,
   updateConfigAndInit,
+  seenVidsAndTime,
 };
