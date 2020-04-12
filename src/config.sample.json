@@ -8,6 +8,7 @@
   "YOUTUBE_API_KEY": "AIzaSyDOt28xV1IHFjtWw9AFyYRZ6G3VJWcc1Ts",
   "EDIT_PREVIOUS_MESSAGE_IN": 1000,
   "RENEW_BEFORE": 43200,
+  "SUBSCRIBE_INTERVAL": 4000,
   "TOPICS": {
     "星姐": "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC5CwaMl1eIgY8h02uZw7u8A"
   },

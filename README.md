@@ -65,5 +65,8 @@ Configure is shown in `config.sample.json`.
 
   // Renew the subscription n (seconds) before expiration.
   "RENEW_BEFORE": 43200,
+
+  // Subscribe request sending interval.
+  "SUBSCRIBE_INTERVAL": 4000
 }
 ```
