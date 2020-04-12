@@ -5,7 +5,6 @@ const updateConfigAndInit = require("../src/index").updateConfigAndInit;
 const utils = require("../src/utils");
 const arg = require("arg");
 const fs = require("fs");
-const fetch = require("node-fetch");
 
 const args = arg({
   // Types
@@ -78,25 +77,7 @@ if (args["--subscribe"]) {
     console.log("No CALLBACK_URL present. Cannot subscribe.");
   } else {
     for (let topic of validTopics) {
-      let urlencoded = new URLSearchParams();
-      urlencoded.append("hub.callback", config.CALLBACK_URL);
-      urlencoded.append("hub.verify", "async");
-      urlencoded.append("hub.mode", "subscribe");
-      urlencoded.append("hub.topic", topic);
-
-      fetch("https://pubsubhubbub.appspot.com/subscribe", {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: urlencoded,
-        method: "POST",
-      })
-        .then(() => {
-          console.log(`Subscription request sent for ${topic}`);
-        })
-        .catch((err) => {
-          console.log(`Subscription request failed for ${topic}: ${err}`);
-        });
+      utils.subscriptionRequest(config.CALLBACK_URL, topic);
     }
   }
 }
