@@ -5,6 +5,7 @@ module.exports = (main) => {
     CHECK_INTERVAL: 1000,
     SERVER_PORT: 3000,
     PATH_KEY: "/sub",
+    CALLBACK_URL: "http://127.0.0.1",
     YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
     TOPICS: {
       星姐:
