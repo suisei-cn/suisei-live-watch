@@ -34,7 +34,9 @@ Configure is shown in `config.sample.json`.
   // Note that the ip/domain should be your external IP/domain.
   "CALLBACK_URL": "http://127.0.0.1:3000/test",
 
-  // (Will override CALLBACK_URL) 2. server port and path key.
+  // 2. server port and path key. (Will override CALLBACK_URL)
+  // Note that in a future version the two configurations might be deprecated
+  // and CALLBACK_URL will be mandatory.
   "SERVER_PORT": 3000,
   "PATH_KEY": "/sub",
 
@@ -56,6 +58,12 @@ Configure is shown in `config.sample.json`.
   // Post_fetch functions if you want to process other stuffs. (optional)
   // Notice that this will cause yt-watch to fetch snippet for every time,
   // which might slightly increase the speed of quota burnout.
-  "POST_FETCH": "/home/ubuntu/post-fetch.js"
+  "POST_FETCH": "/home/ubuntu/post-fetch.js",
+
+  // If last message sent is less than n seconds, update the old message rather than sending a new one.
+  "EDIT_PREVIOUS_MESSAGE_IN": 1000,
+
+  // Renew the subscription n (seconds) before expiration.
+  "RENEW_BEFORE": 43200,
 }
 ```
