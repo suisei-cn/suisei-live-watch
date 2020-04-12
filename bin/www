@@ -76,8 +76,11 @@ if (args["--subscribe"]) {
   if (!config.CALLBACK_URL) {
     console.log("No CALLBACK_URL present. Cannot subscribe.");
   } else {
-    for (let topic of validTopics) {
-      utils.subscriptionRequest(config.CALLBACK_URL, topic);
+    for (let [key, topic] of validTopics.entries()) {
+      setTimeout(() => {
+        utils.subscriptionRequest(config.CALLBACK_URL, topic);
+        console.log(`Subscription ${key + 1}/${validTopics.length} completed.`);
+      }, key * (config.SUBSCRIBE_INTERVAL || 4000));
     }
   }
 }
