@@ -33,6 +33,8 @@ function listen() {
   const RECORD_TIME_LIMIT =
     config.RECORD_TIME_LIMIT || 90 * 24 * 60 * 60 * 1000;
   const EDIT_PREVIOUS_MESSAGE_IN = config.EDIT_PREVIOUS_MESSAGE_IN || 1000;
+  const RENEW_BEFORE = config.RENEW_BEFORE || 12 * 60 * 60;
+  const CALLBACK_URL = config.CALLBACK_URL;
 
   cron.init();
 
@@ -61,6 +63,20 @@ function listen() {
         console.info(`Topic ${topicTitle} challenge passed.`);
       } else {
         console.info(`Side-topic (id: ${topic}) challenge passed.`);
+      }
+      if (config.CALLBACK_URL && req.query["hub.lease_seconds"]) {
+        cron.addCron(
+          Number(new Date()) +
+            (Number(req.query["hub.lease_seconds"]) - RENEW_BEFORE) * 1000,
+          function () {
+            utils.subscriptionRequest(CALLBACK_URL, topic);
+          },
+          topic
+        );
+      } else {
+        console.warn(
+          `${topic}: We can't see the lease time of this subscription. It may expire without notice.`
+        );
       }
       res.status(200).send(req.query["hub.challenge"]);
       return;
@@ -305,10 +321,16 @@ function updateConfigAndInit(conf) {
   console.log("Accepting", config.TOPICS, config.SUB_TOPICS);
   cron.setConfig(conf);
   message.setConfig(conf);
+  if (!config.CALLBACK_URL) {
+    console.warn(
+      "[WARN] You didn't specify the CALLBACK_URL! Your subscription may expire automatically without notice."
+    );
+  }
 }
 
 module.exports = {
   app,
   updateConfigAndInit,
   seenVidsAndTime,
+  cronList: cron.cronList,
 };

@@ -56,4 +56,5 @@ module.exports = {
   init,
   deinit,
   setConfig,
+  cronList,
 };
