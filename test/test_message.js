@@ -83,8 +83,8 @@ describe("Message processing", function () {
       .send(generatePayloadForVideoID("3cqV5BKJHyk")) // video_only, pub at 20181122
       .end((err, res) => {
         res.should.have.status(200);
-        res.text.should.equal("video");
-        main.seenVidsAndTime["3cqV5BKJHyk"].should.have.property("lastMsg");
+        res.text.should.equal("past_video");
+        should.exist(main.seenVidsAndTime["3cqV5BKJHyk"]);
         done();
       });
   });
@@ -98,6 +98,19 @@ describe("Message processing", function () {
         res.should.have.status(200);
         res.text.should.equal("finished_livestream");
         main.seenVidsAndTime["vQHVGXdcqEQ"].should.have.property("lastMsg");
+        done();
+      });
+  });
+  it("should properly process very past stream", (done) => {
+    chai
+      .request(server)
+      .post("/sub")
+      .set("content-type", "application/atom+xml")
+      .send(generatePayloadForVideoID("MOyqbQ_X63k")) // stream, pub at 20200107
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.text.should.equal("past_finished_livestream");
+        should.exist(main.seenVidsAndTime["MOyqbQ_X63k"]);
         done();
       });
   });
@@ -137,8 +150,8 @@ describe("Message processing", function () {
       ) // Sub-topic video not related to keyword
       .end((err, res) => {
         res.should.have.status(200);
-        res.text.should.equal("finished_livestream");
-        main.seenVidsAndTime["0HZJTIzy4aE"].should.have.property("lastMsg");
+        res.text.should.equal("past_finished_livestream");
+        should.exist(main.seenVidsAndTime["0HZJTIzy4aE"]);
         done();
       });
   });

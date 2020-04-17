@@ -67,6 +67,11 @@ Configure is shown in `config.sample.json`.
   "RENEW_BEFORE": 43200,
 
   // Subscribe request sending interval.
-  "SUBSCRIBE_INTERVAL": 4000
+  "SUBSCRIBE_INTERVAL": 4000，
+
+  // With these settings, you can ignore video published too early (in the past) or too far from now (in the future)
+  // Set to 0 to disable.
+  "RECORD_TIME_LIMIT_FUTURE": 7776000000, // 90 days
+  "RECORD_TIME_LIMIT_PAST": 2592000000    // 30 days
 }
 ```
