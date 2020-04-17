@@ -30,8 +30,10 @@ const seenVidsAndTime = {};
 function listen() {
   const CHAT_ID = config.CHAT_ID;
   const SUBPATH = utils.getSubpath(config);
-  const RECORD_TIME_LIMIT =
-    config.RECORD_TIME_LIMIT || 90 * 24 * 60 * 60 * 1000;
+  const RECORD_TIME_LIMIT_FUTURE =
+    config.RECORD_TIME_LIMIT_FUTURE || 90 * 24 * 60 * 60 * 1000;
+  const RECORD_TIME_LIMIT_PAST =
+    config.RECORD_TIME_LIMIT_PAST || 30 * 24 * 60 * 60 * 1000;
   const EDIT_PREVIOUS_MESSAGE_IN = config.EDIT_PREVIOUS_MESSAGE_IN || 1000;
   const RENEW_BEFORE = config.RENEW_BEFORE || 12 * 60 * 60;
   const CALLBACK_URL = config.CALLBACK_URL;
@@ -190,10 +192,17 @@ function listen() {
         ? seenVidsAndTime[vid].lastMsg
         : false;
 
+      let currDate = new Date();
+
       if (!meta.liveStreamingDetails) {
         // It's a video, not livestream
         // Well let's post it ONCE.
         console.log(`${vid} is a video.`);
+        if (currDate - announceData.time > RECORD_TIME_LIMIT_PAST) {
+          seenVidsAndTime[vid] = {};
+          res.status(200).send("past_video");
+          return;
+        }
         if (!seenVidsAndTime[vid]) {
           let msgid = await message.announceVid(
             announceData,
@@ -215,6 +224,14 @@ function listen() {
         // It's now a video...
         // ALso, let's post it ONCE.
         console.log(`${vid} has ended.`);
+        if (
+          currDate - new Date(meta.liveStreamingDetails.actualEndTime) >
+          RECORD_TIME_LIMIT_PAST
+        ) {
+          seenVidsAndTime[vid] = {};
+          res.status(200).send("past_finished_livestream");
+          return;
+        }
         if (!seenVidsAndTime[vid]) {
           let msgid = await message.announceVid(
             announceData,
@@ -240,8 +257,7 @@ function listen() {
       // Everything is well
       let targetDate = new Date(meta.liveStreamingDetails.scheduledStartTime);
       announceData.time = targetDate;
-      let currDate = new Date();
-      if (targetDate - currDate > RECORD_TIME_LIMIT) {
+      if (targetDate - currDate > RECORD_TIME_LIMIT_FUTURE) {
         console.log(`${vid}: Schedule too far away. Ignoring.`);
         res.status(200).send("too_far_away");
         return;
