@@ -16,6 +16,21 @@ const parser = new Parser({
 
 var config = {};
 
+const notificationSchemes = [
+  {
+    time: (currentDate, streamDate) => streamDate - 3 * 60 * 60 * 1000,
+    label: "3小时",
+  },
+  {
+    time: (currentDate, streamDate) => streamDate - 30 * 60 * 1000,
+    label: "30分钟",
+  },
+  {
+    time: (currentDate, streamDate) => currentDate,
+    label: "",
+  },
+];
+
 const options = {
   inflate: true,
   limit: "100kb",
@@ -263,69 +278,30 @@ function listen() {
         return;
       }
 
-      cron.addCron(
-        currDate,
-        async function () {
-          let msgid = await message.announceCast(
-            announceData,
-            CHAT_ID,
-            lastMsgId
-          );
-          seenVidsAndTime[vid].lastMsg = msgid;
-          setTimeout(() => {
-            seenVidsAndTime[vid].lastMsg = undefined;
-          }, EDIT_PREVIOUS_MESSAGE_IN);
-        },
-        vid
-      );
-      if (targetDate - 30 * 60 * 1000 <= currDate) {
-        console.log(`Less than 30 minutes to this stream. Ignoring this cron.`);
-        res.status(200).send("about_to_start");
-        return;
+      for (const schedule of notificationSchemes) {
+        let sendDate = schedule.time(currDate, targetDate);
+        if (sendDate <= currDate) {
+          continue;
+        }
+        cron.addCron(
+          sendDate,
+          async function () {
+            let msgid = await message.announceCast(
+              Object.assign(announceData, {
+                time_left: schedule.label,
+              }),
+              CHAT_ID,
+              lastMsgId
+            );
+            seenVidsAndTime[vid].lastMsg = msgid;
+            setTimeout(() => {
+              seenVidsAndTime[vid].lastMsg = undefined;
+            }, EDIT_PREVIOUS_MESSAGE_IN);
+          },
+          vid
+        );
       }
-      cron.addCron(
-        targetDate - 30 * 60 * 1000,
-        async function () {
-          let msgid = message.announceCast(
-            Object.assign(announceData, {
-              time_left: "30分钟",
-            }),
-            CHAT_ID,
-            lastMsgId
-          );
-          seenVidsAndTime[vid].lastMsg = msgid;
-          console.log(EDIT_PREVIOUS_MESSAGE_IN);
-          setTimeout(() => {
-            seenVidsAndTime[vid].lastMsg = undefined;
-          }, EDIT_PREVIOUS_MESSAGE_IN);
-        },
-        vid
-      );
-
-      if (targetDate - 3 * 60 * 60 * 1000 <= currDate) {
-        console.log(`Less than 3 hours to this stream. Ignoring this cron.`);
-        res.status(200).send("soon_to_start");
-        return;
-      }
-      cron.addCron(
-        targetDate - 3 * 60 * 60 * 1000,
-        async function () {
-          let msgid = await message.announceCast(
-            Object.assign(announceData, {
-              time_left: "3小时",
-            }),
-            CHAT_ID,
-            lastMsgId
-          );
-          seenVidsAndTime[vid].lastMsg = msgid;
-          setTimeout(() => {
-            seenVidsAndTime[vid].lastMsg = undefined;
-          }, EDIT_PREVIOUS_MESSAGE_IN);
-        },
-        vid
-      );
     }
-
     res.status(200).send("ack");
     return;
   });
