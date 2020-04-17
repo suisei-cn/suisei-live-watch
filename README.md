@@ -72,6 +72,9 @@ Configure is shown in `config.sample.json`.
   // With these settings, you can ignore video published too early (in the past) or too far from now (in the future)
   // Set to 0 to disable.
   "RECORD_TIME_LIMIT_FUTURE": 7776000000, // 90 days
-  "RECORD_TIME_LIMIT_PAST": 2592000000    // 30 days
+  "RECORD_TIME_LIMIT_PAST": 2592000000,    // 30 days
+
+  // Send the notification as a photo message with the thumbnail link. Don't let Telegram grab webview
+  "SEND_AS_PHOTO_MESSAGE": false
 }
 ```
