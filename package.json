@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha --exit"
+    "test": "test/tests.sh"
   },
   "repository": {
     "type": "git",
