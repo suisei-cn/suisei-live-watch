@@ -1,6 +1,6 @@
 # yt-watch
 
-[![David deps](https://img.shields.io/david/suisei-cn/suisei-live-watch.svg?style=flat)](https://david-dm.org//suisei-cn/suisei-live-watch)
+[![David deps](https://img.shields.io/david/suisei-cn/suisei-live-watch.svg?style=flat)](https://david-dm.org/suisei-cn/suisei-live-watch)
 
 [![](https://nodei.co/npm/yt-watch.png?global=true)](https://nodei.co/npm/yt-watch)
 
