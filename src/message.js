@@ -4,9 +4,11 @@ require("moment-timezone");
 moment.locale("zh-cn");
 
 var BOT_KEY = "";
+var SEND_AS_PHOTO_MESSAGE = false;
 
 function setConfig(conf) {
   BOT_KEY = conf.BOT_KEY;
+  SEND_AS_PHOTO_MESSAGE = conf.SEND_AS_PHOTO_MESSAGE || false;
 }
 
 async function sendTGMessage(chatid, text) {
@@ -27,7 +29,23 @@ async function sendTGMessage(chatid, text) {
   return result.result.message_id;
 }
 
-async function editTGMessage(chatid, msgid, text) {
+async function sendTGPhotoMessage(chatid, text, photo_link) {
+  let result = await fetch(`https://api.telegram.org/bot${BOT_KEY}/sendPhoto`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: JSON.stringify({
+      chat_id: chatid,
+      photo: photo_link,
+      caption: text,
+      parse_mode: "markdown",
+    }),
+  }).then((x) => x.json());
+  return result.result.message_id;
+}
+
+async function editTGMessageText(chatid, msgid, text) {
   let result = await fetch(
     `https://api.telegram.org/bot${BOT_KEY}/editMessageText`,
     {
@@ -39,6 +57,25 @@ async function editTGMessage(chatid, msgid, text) {
         chat_id: chatid,
         message_id: msgid,
         text: text,
+        parse_mode: "markdown",
+      }),
+    }
+  ).then((x) => x.json());
+  return result.result.message_id;
+}
+
+async function editTGMessageCaption(chatid, msgid, text) {
+  let result = await fetch(
+    `https://api.telegram.org/bot${BOT_KEY}/editMessageCaption`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({
+        chat_id: chatid,
+        message_id: msgid,
+        caption: text,
         parse_mode: "markdown",
       }),
     }
@@ -80,9 +117,17 @@ async function announceVid(data, chatid, oldmsgid, wasstream = false) {
     `[视频地址](https://youtube.com/watch?v=${data.vid})`;
   let r;
   if (oldmsgid) {
-    r = await editTGMessage(chatid, oldmsgid, msgText);
+    if (SEND_AS_PHOTO_MESSAGE) {
+      r = await editTGMessageCaption(chatid, oldmsgid, msgText);
+    } else {
+      r = await editTGMessageText(chatid, oldmsgid, msgText);
+    }
   } else {
-    r = await sendTGMessage(chatid, msgText);
+    if (SEND_AS_PHOTO_MESSAGE) {
+      r = await sendTGPhotoMessage(chatid, msgText, `https://i.ytimg.com/vi/${data.vid}/sddefault.jpg`);
+    } else {
+      r = await sendTGMessage(chatid, msgText);
+    }
   }
   return r;
 }
