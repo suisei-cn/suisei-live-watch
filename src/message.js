@@ -54,13 +54,13 @@ async function announceCast(data, chatid, oldmsgid) {
       `距离${data.name}直播还有${data.time_left}。\n` +
       `${data.title}\n` +
       `时间：${dateTzString} (CST)\n` +
-      `[直播地址](https://youtu.be/${data.vid})`
+      `[直播地址](https://youtube.com/watch?v=${data.vid})`
     : `#${data.name}直播预告 ${
         data.fromSubtopic ? "#联动 " : ""
       }#新直播计划\n` +
       `${data.title}\n` +
       `时间：${dateTzString} (CST)\n` +
-      `[直播地址](https://youtu.be/${data.vid})`;
+      `[直播地址](https://youtube.com/watch?v=${data.vid})`;
   if (oldmsgid) {
     return await editTGMessage(chatid, oldmsgid, msgText);
   } else {
@@ -77,7 +77,7 @@ async function announceVid(data, chatid, oldmsgid, wasstream = false) {
       : `#${data.name}发布新视频 ${data.fromSubtopic ? "#联动" : ""}\n`) +
     `${data.title}\n` +
     `时间：${dateTzString} (CST)\n` +
-    `[视频地址](https://youtu.be/${data.vid})`;
+    `[视频地址](https://youtube.com/watch?v=${data.vid})`;
   let r;
   if (oldmsgid) {
     r = await editTGMessage(chatid, oldmsgid, msgText);
