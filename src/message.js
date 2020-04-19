@@ -11,6 +11,15 @@ function setConfig(conf) {
   SEND_AS_PHOTO_MESSAGE = conf.SEND_AS_PHOTO_MESSAGE || false;
 }
 
+function checkResult(result, chatid, text, func) {
+  if (!result.ok) {
+    console.log(`Message sending failed when invoking ${func}:`, result);
+    console.log(`Chatid: ${chatid}, text: ${text}`);
+    return -1;
+  }
+  return result.result.message_id;
+}
+
 async function sendTGMessage(chatid, text) {
   let result = await fetch(
     `https://api.telegram.org/bot${BOT_KEY}/sendMessage`,
@@ -26,7 +35,7 @@ async function sendTGMessage(chatid, text) {
       }),
     }
   ).then((x) => x.json());
-  return result.result.message_id;
+  return checkResult(result, chatid, text, "sendTGMessage");
 }
 
 async function sendTGPhotoMessage(chatid, text, photo_link) {
@@ -42,7 +51,7 @@ async function sendTGPhotoMessage(chatid, text, photo_link) {
       parse_mode: "markdown",
     }),
   }).then((x) => x.json());
-  return result.result.message_id;
+  return checkResult(result, chatid, text, "sendTGPhotoMessage");
 }
 
 async function editTGMessageText(chatid, msgid, text) {
@@ -61,7 +70,7 @@ async function editTGMessageText(chatid, msgid, text) {
       }),
     }
   ).then((x) => x.json());
-  return result.result.message_id;
+  return checkResult(result, chatid, text, "editTGMessageText");
 }
 
 async function editTGMessageCaption(chatid, msgid, text) {
@@ -80,7 +89,7 @@ async function editTGMessageCaption(chatid, msgid, text) {
       }),
     }
   ).then((x) => x.json());
-  return result.result.message_id;
+  return checkResult(result, chatid, text, "editTGMessageCaption");
 }
 
 async function announceCast(data, chatid, oldmsgid) {
