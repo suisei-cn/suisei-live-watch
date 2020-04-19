@@ -280,7 +280,7 @@ function listen() {
 
       for (const schedule of notificationSchemes) {
         let sendDate = schedule.time(currDate, targetDate);
-        if (sendDate <= currDate) {
+        if (sendDate < currDate) {
           continue;
         }
         cron.addCron(
