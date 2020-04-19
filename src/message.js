@@ -99,9 +99,21 @@ async function announceCast(data, chatid, oldmsgid) {
       `时间：${dateTzString} (CST)\n` +
       `[直播地址](https://youtube.com/watch?v=${data.vid})`;
   if (oldmsgid) {
-    return await editTGMessage(chatid, oldmsgid, msgText);
+    if (SEND_AS_PHOTO_MESSAGE) {
+      r = await editTGMessageCaption(chatid, oldmsgid, msgText);
+    } else {
+      r = await editTGMessageText(chatid, oldmsgid, msgText);
+    }
   } else {
-    return await sendTGMessage(chatid, msgText);
+    if (SEND_AS_PHOTO_MESSAGE) {
+      r = await sendTGPhotoMessage(
+        chatid,
+        msgText,
+        `https://i.ytimg.com/vi/${data.vid}/sddefault.jpg`
+      );
+    } else {
+      r = await sendTGMessage(chatid, msgText);
+    }
   }
 }
 
@@ -124,7 +136,11 @@ async function announceVid(data, chatid, oldmsgid, wasstream = false) {
     }
   } else {
     if (SEND_AS_PHOTO_MESSAGE) {
-      r = await sendTGPhotoMessage(chatid, msgText, `https://i.ytimg.com/vi/${data.vid}/sddefault.jpg`);
+      r = await sendTGPhotoMessage(
+        chatid,
+        msgText,
+        `https://i.ytimg.com/vi/${data.vid}/sddefault.jpg`
+      );
     } else {
       r = await sendTGMessage(chatid, msgText);
     }
