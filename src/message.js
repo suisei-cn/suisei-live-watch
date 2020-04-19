@@ -98,6 +98,7 @@ async function announceCast(data, chatid, oldmsgid) {
       `${data.title}\n` +
       `时间：${dateTzString} (CST)\n` +
       `[直播地址](https://youtube.com/watch?v=${data.vid})`;
+  let r;
   if (oldmsgid) {
     if (SEND_AS_PHOTO_MESSAGE) {
       r = await editTGMessageCaption(chatid, oldmsgid, msgText);
@@ -115,6 +116,7 @@ async function announceCast(data, chatid, oldmsgid) {
       r = await sendTGMessage(chatid, msgText);
     }
   }
+  return r;
 }
 
 async function announceVid(data, chatid, oldmsgid, wasstream = false) {
