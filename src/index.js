@@ -280,6 +280,10 @@ function listen() {
 
       for (const schedule of notificationSchemes) {
         let sendDate = schedule.time(currDate, targetDate);
+        if (isNaN(sendDate)) {
+          console.warn(`Invalid date detected. Original RSS:`, body);
+          break;
+        }
         if (sendDate < currDate) {
           continue;
         }
