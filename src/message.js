@@ -51,6 +51,10 @@ async function sendTGPhotoMessage(chatid, text, photo_link) {
       parse_mode: "markdown",
     }),
   }).then((x) => x.json());
+  if (result.ok === false) {
+    console.warn(`Send image post failed: ${result.description}`);
+    return await sendTGMessage(chatid, text);
+  }
   return checkResult(result, chatid, text, "sendTGPhotoMessage");
 }
 
