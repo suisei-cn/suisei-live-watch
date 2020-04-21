@@ -98,8 +98,8 @@ describe("Message processing (with photo)", function () {
       .send(generatePayloadForVideoID("vQHVGXdcqEQ")) // stream, pub at 20200322
       .end((err, res) => {
         res.should.have.status(200);
-        res.text.should.equal("finished_livestream");
-        main.seenVidsAndTime["vQHVGXdcqEQ"].should.have.property("lastMsg");
+        res.text.should.equal("past_finished_livestream");
+        should.exist(main.seenVidsAndTime["vQHVGXdcqEQ"]);
         done();
       });
   });

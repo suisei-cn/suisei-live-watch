@@ -96,7 +96,7 @@ describe("Message processing", function () {
       .send(generatePayloadForVideoID("vQHVGXdcqEQ")) // stream, pub at 20200322
       .end((err, res) => {
         res.should.have.status(200);
-        res.text.should.equal("finished_livestream");
+        res.text.should.equal("past_finished_livestream");
         main.seenVidsAndTime["vQHVGXdcqEQ"].should.have.property("lastMsg");
         done();
       });
