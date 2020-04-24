@@ -235,7 +235,7 @@ function listen() {
         return;
       }
 
-      if (meta.liveStreamingDetails.actualEndTime) {
+      if (!meta.liveStreamingDetails.scheduledStartTime) {
         // It's now a video...
         // ALso, let's post it ONCE.
         console.log(`${vid} has ended.`);
