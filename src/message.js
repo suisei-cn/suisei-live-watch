@@ -123,7 +123,7 @@ async function announceCast(data, chatid, oldmsgid) {
       r = await sendTGPhotoMessage(
         chatid,
         msgText,
-        `https://i.ytimg.com/vi/${data.vid}/sddefault.jpg`
+        `https://i.ytimg.com/vi/${data.vid}/maxresdefault.jpg`
       );
     } else {
       r = await sendTGMessage(chatid, msgText);
@@ -154,7 +154,7 @@ async function announceVid(data, chatid, oldmsgid, wasstream = false) {
       r = await sendTGPhotoMessage(
         chatid,
         msgText,
-        `https://i.ytimg.com/vi/${data.vid}/sddefault.jpg`
+        `https://i.ytimg.com/vi/${data.vid}/maxresdefault.jpg`
       );
     } else {
       r = await sendTGMessage(chatid, msgText);
