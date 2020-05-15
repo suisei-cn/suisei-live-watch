@@ -6,6 +6,10 @@ moment.locale("zh-cn");
 var BOT_KEY = "";
 var SEND_AS_PHOTO_MESSAGE = false;
 
+function fix_underscore(text) => {
+  return text.replace(/_/g, "\\_");
+}
+
 function setConfig(conf) {
   BOT_KEY = conf.BOT_KEY;
   SEND_AS_PHOTO_MESSAGE = conf.SEND_AS_PHOTO_MESSAGE || false;
@@ -30,7 +34,7 @@ async function sendTGMessage(chatid, text) {
       },
       body: JSON.stringify({
         chat_id: chatid,
-        text: text,
+        text: fix_underscore(text),
         parse_mode: "markdown",
       }),
     }
@@ -47,7 +51,7 @@ async function sendTGPhotoMessage(chatid, text, photo_link) {
     body: JSON.stringify({
       chat_id: chatid,
       photo: photo_link,
-      caption: text,
+      caption: fix_underscore(text),
       parse_mode: "markdown",
     }),
   }).then((x) => x.json());
@@ -69,7 +73,7 @@ async function editTGMessageText(chatid, msgid, text) {
       body: JSON.stringify({
         chat_id: chatid,
         message_id: msgid,
-        text: text,
+        text: fix_underscore(text),
         parse_mode: "markdown",
       }),
     }
@@ -88,7 +92,7 @@ async function editTGMessageCaption(chatid, msgid, text) {
       body: JSON.stringify({
         chat_id: chatid,
         message_id: msgid,
-        caption: text,
+        caption: fix_underscore(text),
         parse_mode: "markdown",
       }),
     }
