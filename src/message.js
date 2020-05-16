@@ -6,7 +6,7 @@ moment.locale("zh-cn");
 var BOT_KEY = "";
 var SEND_AS_PHOTO_MESSAGE = false;
 
-function fix_underscore(text) => {
+function fix_underscore(text) {
   return text.replace(/_/g, "\\_");
 }
 
