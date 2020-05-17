@@ -6,10 +6,6 @@ moment.locale("zh-cn");
 var BOT_KEY = "";
 var SEND_AS_PHOTO_MESSAGE = false;
 
-function fix_underscore(text) {
-  return text.replace(/_/g, "\\_");
-}
-
 function setConfig(conf) {
   BOT_KEY = conf.BOT_KEY;
   SEND_AS_PHOTO_MESSAGE = conf.SEND_AS_PHOTO_MESSAGE || false;
@@ -34,8 +30,8 @@ async function sendTGMessage(chatid, text) {
       },
       body: JSON.stringify({
         chat_id: chatid,
-        text: fix_underscore(text),
-        parse_mode: "markdown",
+        text: text,
+        parse_mode: "html",
       }),
     }
   ).then((x) => x.json());
@@ -51,8 +47,8 @@ async function sendTGPhotoMessage(chatid, text, photo_link) {
     body: JSON.stringify({
       chat_id: chatid,
       photo: photo_link,
-      caption: fix_underscore(text),
-      parse_mode: "markdown",
+      caption: text,
+      parse_mode: "html",
     }),
   }).then((x) => x.json());
   if (result.ok === false) {
@@ -73,8 +69,8 @@ async function editTGMessageText(chatid, msgid, text) {
       body: JSON.stringify({
         chat_id: chatid,
         message_id: msgid,
-        text: fix_underscore(text),
-        parse_mode: "markdown",
+        text: text,
+        parse_mode: "html",
       }),
     }
   ).then((x) => x.json());
@@ -92,8 +88,8 @@ async function editTGMessageCaption(chatid, msgid, text) {
       body: JSON.stringify({
         chat_id: chatid,
         message_id: msgid,
-        caption: fix_underscore(text),
-        parse_mode: "markdown",
+        caption: text,
+        parse_mode: "html",
       }),
     }
   ).then((x) => x.json());
@@ -108,13 +104,13 @@ async function announceCast(data, chatid, oldmsgid) {
       `距离${data.name}直播还有${data.time_left}。\n` +
       `${data.title}\n` +
       `时间：${dateTzString} (CST)\n` +
-      `[直播地址](https://youtube.com/watch?v=${data.vid})`
+      `<a href='https://youtube.com/watch?v=${data.vid}'>直播地址</a>`
     : `#${data.name}直播预告 ${
         data.fromSubtopic ? "#联动 " : ""
       }#新直播计划\n` +
       `${data.title}\n` +
       `时间：${dateTzString} (CST)\n` +
-      `[直播地址](https://youtube.com/watch?v=${data.vid})`;
+      `<a href='https://youtube.com/watch?v=${data.vid}'>直播地址</a>`;
   let r;
   if (oldmsgid) {
     if (SEND_AS_PHOTO_MESSAGE) {
@@ -145,7 +141,7 @@ async function announceVid(data, chatid, oldmsgid, wasstream = false) {
       : `#${data.name}发布新视频 ${data.fromSubtopic ? "#联动" : ""}\n`) +
     `${data.title}\n` +
     `时间：${dateTzString} (CST)\n` +
-    `[视频地址](https://youtube.com/watch?v=${data.vid})`;
+    `<a href='https://youtube.com/watch?v=${data.vid}'>视频地址</a>`;
   let r;
   if (oldmsgid) {
     if (SEND_AS_PHOTO_MESSAGE) {
