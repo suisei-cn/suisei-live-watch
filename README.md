@@ -1,3 +1,5 @@
+**[pystargazer](https://github.com/suisei-cn/pystargazer) is a more extensive alternative of this. This project is not in active development, and will be archived after pystargazer released a fully self-hostable version.**
+
 # yt-watch
 
 [![David deps](https://img.shields.io/david/suisei-cn/suisei-live-watch.svg?style=flat)](https://david-dm.org/suisei-cn/suisei-live-watch)
