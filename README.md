@@ -1,4 +1,4 @@
-**[pystargazer](https://github.com/suisei-cn/pystargazer) is a more extensive alternative of this. This project is not in active development, and will be archived after pystargazer released a fully self-hostable version.**
+**[pystargazer](https://github.com/suisei-cn/pystargazer) is a more extensive alternative of this. See [here](https://github.com/suisei-cn/stargazer-telegram) for the self-hosting instructions.**
 
 # yt-watch
 
